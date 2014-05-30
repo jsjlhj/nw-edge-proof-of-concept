@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+  </head>
+  
+  <body>
+    <h1 id="message"></h1>
+  </body>
+
+  <script>
+    'use strict';
+    var edge = require('edge')
+      , http = require('http')
+      , fs = require('fs')
+      , homeDir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+      , reqOptions = { host: 'dll-server.herokuapp.com', path: '/', method: 'GET' };
+
+    // Make request for DLL
+    var req = http.request(reqOptions, function(res) {
+      // Write dll to local filesystem
+      res.pipe(fs.createWriteStream(homeDir + '/MyDll.dll'));
+
+      res.on('end', function() {
+        // register a method from the dll once the file is
+        // done downloading
+        var hello = edge.func({
+          assemblyFile: 'MyDll.dll',
+          typeName: 'NwEdgeLib.TestType',
+          methodName: 'SayHello'
+        });
+
+        // Call method from dll in node and add its result to
+        // the DOM
+        hello('JavaScript', function(err, result) {
+          if(err) { throw err; }
+          document.getElementById('message').innerHTML = result;
+        });
+      });
+    });
+
+    req.on('error', function(err) { if(err) { throw err; } });
+
+    req.end();
+  </script>
+</html>
