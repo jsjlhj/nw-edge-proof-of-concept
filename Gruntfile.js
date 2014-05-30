@@ -6,11 +6,9 @@ module.exports = function(grunt) {
 
     nodewebkit: {
       options: {
-          version: '0.8.6',
           build_dir: './build', 
-          keep_nw: true,
           mac: false,
-          win: true, 
+          win: false, 
           linux32: false,
           linux64: true 
       },
@@ -23,3 +21,18 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', ['nodewebkit']);
 };
+
+
+/* var edge = require('edge');
+
+var helloWorld = edge.func(function() {/*
+  async (input) => 
+  {
+    return "Hello " + input.ToString();
+  }
+*});
+
+helloWorld('World', function(err, result) {
+  if(err) { throw err; }
+  console.log(result);
+});*/
